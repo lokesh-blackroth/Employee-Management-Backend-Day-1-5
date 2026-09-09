@@ -4,96 +4,349 @@ A Django-based backend project for an Employee Management System.
 
 ## Project Setup
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd employee_management_backend
+```
 
-2. Create a virtual environment
+### 2. Create a Virtual Environment
+
+```bash
 python -m venv .venv
-3. Activate the virtual environment
+```
 
-Windows PowerShell:
+### 3. Activate the Virtual Environment
 
+**Windows PowerShell:**
+
+```powershell
 .venv\Scripts\Activate.ps1
-4. Install dependencies
+```
+
+### 4. Install Dependencies
+
+```bash
 python -m pip install -r requirements.txt
-5. Apply migrations
+```
+
+### 5. Apply Migrations
+
+```bash
 python manage.py migrate
-6. Run the development server
+```
+
+### 6. Run the Development Server
+
+```bash
 python manage.py runserver
+```
 
 The server will be available at:
 
-http://127.0.0.1:8000/
+`http://127.0.0.1:8000/`
 
-Health Check API
-Endpoint
+---
 
-GET /api/health/
+## Health Check API
 
-Response
+### Endpoint
+
+`GET /api/health/`
+
+### Response
+
+```json
 {
     "status": "success",
     "message": "Employee Management Backend is running"
 }
-Project Structure
+```
+
+---
+
+## Employee API Endpoints
+
+| Method | Endpoint               | Description          |
+| ------ | ---------------------- | -------------------- |
+| GET    | `/api/employees/`      | List employees       |
+| POST   | `/api/employees/`      | Create an employee   |
+| GET    | `/api/employees/<id>/` | Retrieve an employee |
+| PUT    | `/api/employees/<id>/` | Update an employee   |
+| DELETE | `/api/employees/<id>/` | Delete an employee   |
+
+---
+
+## Employee Model
+
+The `employees` application contains the `Employee` model.
+
+### Fields
+
+| Field           | Type          | Description                         |
+| --------------- | ------------- | ----------------------------------- |
+| `id`            | AutoField     | Automatically generated primary key |
+| `employee_code` | CharField     | Unique employee code                |
+| `first_name`    | CharField     | Employee first name                 |
+| `last_name`     | CharField     | Employee last name                  |
+| `email`         | EmailField    | Unique email address                |
+| `phone`         | CharField     | Employee phone number               |
+| `department`    | CharField     | Employee department                 |
+| `designation`   | CharField     | Employee designation                |
+| `salary`        | DecimalField  | Employee salary                     |
+| `joining_date`  | DateField     | Employee joining date               |
+| `is_active`     | BooleanField  | Employee active status              |
+| `created_at`    | DateTimeField | Record creation time                |
+| `updated_at`    | DateTimeField | Last update time                    |
+
+The model also implements `__str__()` to display the employee code and name.
+
+---
+
+## Database & Migrations
+
+The Employee model is stored in the database using Django ORM.
+
+### Generate migrations
+
+```bash
+python manage.py makemigrations
+```
+
+### Apply migrations
+
+```bash
+python manage.py migrate
+```
+
+Migration created:
+
+```text
+employees/migrations/0001_initial.py
+```
+
+---
+
+## Django ORM
+
+Employee records were created and tested using the Django shell.
+
+### Open Django Shell
+
+```bash
+python manage.py shell
+```
+
+### Import Employee Model
+
+```python
+from employees.models import Employee
+```
+
+### Create Employee
+
+```python
+Employee.objects.create(
+    employee_code="EMP001",
+    first_name="Rahul",
+    last_name="Sharma",
+    email="rahul@example.com",
+    phone="9876543210",
+    department="IT",
+    designation="Software Engineer",
+    salary=60000,
+    joining_date="2024-01-15",
+    is_active=True
+)
+```
+
+### Retrieve All Employees
+
+```python
+Employee.objects.all()
+```
+
+### Filter Active Employees
+
+```python
+Employee.objects.filter(is_active=True)
+```
+
+### Filter Inactive Employees
+
+```python
+Employee.objects.filter(is_active=False)
+```
+
+### Filter IT Employees
+
+```python
+Employee.objects.filter(department="IT")
+```
+
+### Filter Employees With Salary Above 50000
+
+```python
+Employee.objects.filter(salary__gt=50000)
+```
+
+### Exclude IT Employees
+
+```python
+Employee.objects.exclude(department="IT")
+```
+
+### Get a Single Employee
+
+```python
+Employee.objects.get(employee_code="EMP001")
+```
+
+### Update Employee
+
+```python
+employee = Employee.objects.get(employee_code="EMP001")
+employee.salary = 65000
+employee.save()
+```
+
+### Delete Employee
+
+```python
+employee = Employee.objects.get(employee_code="EMP015")
+employee.delete()
+```
+
+### Order Employees by Joining Date
+
+Ascending:
+
+```python
+Employee.objects.order_by("joining_date")
+```
+
+Descending:
+
+```python
+Employee.objects.order_by("-joining_date")
+```
+
+---
+
+## ORM Query Differences
+
+### `get()`
+
+Returns exactly one object.
+
+```python
+Employee.objects.get(employee_code="EMP001")
+```
+
+Raises `DoesNotExist` when no matching employee exists.
+
+### `filter()`
+
+Returns all matching records as a QuerySet.
+
+```python
+Employee.objects.filter(department="IT")
+```
+
+### `exclude()`
+
+Returns records that do not match the condition.
+
+```python
+Employee.objects.exclude(department="IT")
+```
+
+---
+
+## ORM Testing
+
+The following operations were tested through Django shell:
+
+* Created 15 employee records
+* Retrieved all employees
+* Retrieved active employees
+* Retrieved inactive employees
+* Retrieved IT employees
+* Filtered employees with salary greater than 50,000
+* Ordered employees by joining date
+* Used `get()`
+* Used `filter()`
+* Used `exclude()`
+* Updated employee salary
+* Deleted an employee
+* Recreated the deleted employee
+* Verified record counts
+* Tested `DoesNotExist` exception
+* Tested and fixed invalid ORM field filters
+
+---
+
+## Debugging
+
+The following errors were intentionally tested and resolved:
+
+### Invalid ORM Field
+
+Incorrect:
+
+```python
+Employee.objects.filter(departments="IT")
+```
+
+Correct:
+
+```python
+Employee.objects.filter(department="IT")
+```
+
+### Invalid Field Name
+
+Incorrect:
+
+```python
+Employee.objects.filter(nonexistent_field="test")
+```
+
+This produces a Django `FieldError`.
+
+### Employee Not Found
+
+```python
+Employee.objects.get(employee_code="EMP999")
+```
+
+Produces:
+
+```text
+Employee.DoesNotExist
+```
+
+---
+
+## Project Structure
+
+```text
 employee_management_backend/
 ├── employee_management/
 ├── employees/
+│   ├── migrations/
+│   │   └── 0001_initial.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
 ├── manage.py
 ├── requirements.txt
 ├── .gitignore
 └── README.md
-Application
+```
 
-The employees Django application contains the employee management functionality.
-
-Development
-
-Run Django's system checks with:
-
-python manage.py check
-Employee API
-Endpoints
-GET /api/employees/ - List employees
-POST /api/employees/ - Create an employee
-GET /api/employees/<id>/ - Retrieve an employee
-PUT /api/employees/<id>/ - Update an employee
-DELETE /api/employees/<id>/ - Delete an employee
-Employee Model
-
-The Employee model contains:
-
-id
-employee_code
-first_name
-last_name
-email
-phone
-department
-designation
-salary
-joining_date
-is_active
-created_at
-updated_at
-Database & ORM
-Generated and applied Django migrations.
-Created 15 employee records using Django ORM.
-Tested Create, Read, Update, and Delete operations.
-Tested get(), filter(), and exclude().
-Tested active and inactive employee filtering.
-Tested IT department filtering.
-Tested salary filtering (salary > 50000).
-Tested ordering by joining date.
-Verified ORM operations through Django shell.
-Migrations
-python manage.py makemigrations
-python manage.py migrate
-Django Shell
-python manage.py shell
+---
 
 ## Development
 
@@ -101,73 +354,81 @@ Run Django's system checks with:
 
 ```bash
 python manage.py check
+```
 
-## Employee API
+---
 
-### Endpoints
+## Git Progress
 
-- `GET /api/employees/` - List employees
-- `POST /api/employees/` - Create an employee
-- `GET /api/employees/<id>/` - Retrieve an employee
-- `PUT /api/employees/<id>/` - Update an employee
-- `DELETE /api/employees/<id>/` - Delete an employee
+### Day 1 — Django Project Setup
 
-## Employee Model
+Branch:
 
-The `Employee` model contains:
+```text
+feature/django-project-setup
+```
 
-- `id`
-- `employee_code`
-- `first_name`
-- `last_name`
-- `email`
-- `phone`
-- `department`
-- `designation`
-- `salary`
-- `joining_date`
-- `is_active`
-- `created_at`
-- `updated_at`
+Commit:
 
-## Database & ORM
+```text
+4805006 feat: initialize django employee management backend
+```
 
-- Generated and applied Django migrations.
-- Created 15 employee records using Django ORM.
-- Tested Create, Read, Update, and Delete operations.
-- Tested `get()`, `filter()`, and `exclude()`.
-- Tested active and inactive employee filtering.
-- Tested IT department filtering.
-- Tested salary filtering (`salary > 50000`).
-- Tested ordering by joining date.
-- Verified ORM operations through Django shell.
+### Day 2 — Employee URLs and Views
 
-### Migrations
+Branch:
 
-```bash
-python manage.py makemigrations
-python manage.py migrate
+```text
+feature/employee-views
+```
 
-Django Shell
-python manage.py shell
+Commit:
 
-ORM operations were verified through the Django shell.
+```text
+806cc59 feat: implement employee urls and views
+```
 
-Git Progress
-Day 1
+### Day 3 — Employee Model and ORM
 
-Branch: feature/django-project-setup
+Branch:
 
-Commit: 4805006 feat: initialize django employee management backend
+```text
+feature/employee-model
+```
 
-Day 2
+Code commit:
 
-Branch: feature/employee-views
+```text
+09c95d9 feat: add employee model and orm operations
+```
 
-Commit: 806cc59 feat: implement employee urls and views
+README commit:
 
-Day 3
+```text
+e900630 docs: update README with employee model and ORM
+```
 
-Branch: feature/employee-model
+All three branches have been pushed to GitHub.
 
-Commit: 09c95d9 feat: add employee model and orm operations
+---
+
+## Current Status
+
+### Completed
+
+* Django project setup
+* Employee application setup
+* Health Check API
+* Employee URLs and views
+* Employee model
+* Database migration
+* 15 employee records
+* Django ORM CRUD operations
+* Filtering
+* Excluding records
+* Ordering
+* ORM error handling
+* Debugging
+* README documentation
+* Git branches and commits
+* GitHub push
