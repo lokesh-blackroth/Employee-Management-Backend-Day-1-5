@@ -432,3 +432,69 @@ All three branches have been pushed to GitHub.
 * README documentation
 * Git branches and commits
 * GitHub push
+
+
+## Employee CRUD & Django Admin
+
+### Django Admin
+
+The Employee model is registered in Django Admin with:
+
+- Employee ID
+- Employee Code
+- First Name
+- Last Name
+- Email
+- Salary
+- Search by employee code, name and email
+- Filter by salary
+- Ordering by employee ID
+
+### Employee APIs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/employees/` | Get all employees |
+| POST | `/api/employees/` | Create an employee |
+| GET | `/api/employees/<id>/` | Get a single employee |
+| PUT | `/api/employees/<id>/` | Update an employee |
+| PATCH | `/api/employees/<id>/` | Update an employee |
+| DELETE | `/api/employees/<id>/` | Delete an employee |
+
+### Validation
+
+Employee creation and update use `EmployeeForm` validation for:
+
+- Required fields
+- Valid email
+- Unique employee code
+- Unique email
+- Salary greater than zero
+
+### Testing
+
+Tested the following scenarios:
+
+- Create employee
+- Get all employees
+- Get employee by ID
+- Update employee
+- Delete employee
+- Missing email
+- Duplicate employee code
+- Duplicate email
+- Invalid salary
+- Missing required field
+- Invalid employee ID
+- CSRF error debugging
+- Invalid redirect debugging
+
+### Git
+
+Feature branch:
+
+`feature/employee-crud`
+
+Latest commit:
+
+`20d1aaa - feat: implement employee crud and admin`
