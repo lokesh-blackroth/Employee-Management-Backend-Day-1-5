@@ -155,3 +155,4 @@ def employee_detail(request, id):
             "status": "success",
             "message": "Employee deleted successfully"
         })
+    
